@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>飞行棋大冒险 · 主界面视觉稿</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Baloo+2:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brand:#7B6CF6; --brand-dark:#5B4BD6; --brand-soft:#ECE9FF;
+    --accent:#FFB23E; --accent-dark:#F59300;
+    --bg1:#FDF1F7; --bg2:#EEF2FF; --bg3:#EAFBF2;
+    --surface:#FFFFFF; --surface2:#FBFAFF;
+    --ink:#2E2A47; --text:#5A5570; --muted:#9A95B0; --line:#ECE8F5;
+    --red:#FF5C7C; --red-d:#E63962; --red-l:#FFD6E0;
+    --yellow:#FFC53D; --yellow-d:#F0A500; --yellow-l:#FFF1C2;
+    --blue:#4DA3FF; --blue-d:#2D7DE0; --blue-l:#D6ECFF;
+    --green:#43D17A; --green-d:#1FA85B; --green-l:#D2F5DE;
+    --r-sm:10px; --r-md:16px; --r-lg:22px; --r-xl:28px;
+    --sh-sm:0 2px 6px rgba(80,60,160,.10);
+    --sh-md:0 8px 20px rgba(80,60,160,.14);
+    --sh-lg:0 16px 40px rgba(80,60,160,.18);
+    --ease-pop:cubic-bezier(.34,1.56,.64,1);
+    --f-disp:"ZCOOL KuaiLe","Baloo 2","PingFang SC","Microsoft YaHei",sans-serif;
+    --f-body:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    --f-num:"Baloo 2","ZCOOL KuaiLe","PingFang SC",sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; padding:28px; font-family:var(--f-body); color:var(--text);
+    background:linear-gradient(165deg,var(--bg1) 0%,var(--bg2) 60%,var(--bg3) 100%);
+    min-height:100vh;
+  }
+  .wrap{max-width:1080px; margin:0 auto;}
+  .page-title{font-family:var(--f-disp); color:var(--ink); font-size:26px; margin:0 0 4px;}
+  .page-sub{color:var(--muted); font-size:13px; margin:0 0 22px;}
+
+  /* 顶栏 */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    background:var(--surface); border-radius:var(--r-lg); padding:14px 20px;
+    box-shadow:var(--sh-md); margin-bottom:20px;
+  }
+  .brand{display:flex; align-items:center; gap:12px; font-family:var(--f-disp); color:var(--ink); font-size:22px;}
+  .brand .logo{
+    width:42px; height:42px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(180deg,#fff,var(--brand-soft)); box-shadow:inset 0 2px 0 #fff, 0 4px 10px rgba(123,108,246,.25);
+    font-size:22px;
+  }
+  .round-pill{
+    background:var(--brand-soft); color:var(--brand-dark); font-weight:700; font-family:var(--f-num);
+    padding:8px 16px; border-radius:999px; font-size:15px;
+  }
+  .icon-btn{
+    width:42px; height:42px; border-radius:14px; border:none; cursor:pointer;
+    background:var(--surface2); color:var(--text); font-size:18px; box-shadow:var(--sh-sm);
+  }
+
+  .layout{display:flex; gap:22px; align-items:flex-start; flex-wrap:wrap;}
+  .board-col{flex:1 1 520px; min-width:340px;}
+  .side-col{flex:1 1 300px; min-width:300px; display:flex; flex-direction:column; gap:16px;}
+
+  /* 棋盘 */
+  .board{
+    position:relative; width:100%; max-width:560px; aspect-ratio:1/1; margin:0 auto;
+    background:var(--surface); border-radius:32px; border:2px solid var(--line);
+    box-shadow:var(--sh-lg); padding:18px;
+  }
+  .grid{position:absolute; inset:18px; display:grid; grid-template-columns:repeat(15,1fr); grid-template-rows:repeat(15,1fr); gap:3px;}
+  .cell{border-radius:7px; background:#F3F0FA;}
+  .cell.start-red{background:linear-gradient(180deg,var(--red-l),var(--red));}
+  .cell.start-yellow{background:linear-gradient(180deg,var(--yellow-l),var(--yellow));}
+  .cell.start-blue{background:linear-gradient(180deg,var(--blue-l),var(--blue));}
+  .cell.start-green{background:linear-gradient(180deg,var(--green-l),var(--green));}
+  .cell.home-red{background:linear-gradient(180deg,#fff,var(--red-l));}
+  .cell.home-yellow{background:linear-gradient(180deg,#fff,var(--yellow-l));}
+  .cell.home-blue{background:linear-gradient(180deg,#fff,var(--blue-l));}
+  .cell.home-green{background:linear-gradient(180deg,#fff,var(--green-l));}
+  .cell.center{background:linear-gradient(180deg,#FFF6DA,var(--accent)); display:flex; align-items:center; justify-content:center; font-size:13px; color:var(--accent-dark); font-family:var(--f-disp);}
+  .base-pad{position:absolute; width:30%; height:30%; border-radius:22px; box-shadow:inset 0 3px 0 rgba(255,255,255,.6), var(--sh-sm);}
+  .base-pad.red{left:18px; bottom:18px; background:linear-gradient(180deg,var(--red-l),var(--red));}
+  .base-pad.yellow{right:18px; top:18px; background:linear-gradient(180deg,var(--yellow-l),var(--yellow));}
+  .base-pad.blue{right:18px; bottom:18px; background:linear-gradient(180deg,var(--blue-l),var(--blue));}
+  .base-pad.green{left:18px; top:18px; background:linear-gradient(180deg,var(--green-l),var(--green));}
+  .base-pad .token{position:absolute; width:34%; height:34%; border-radius:50%; background:#fff; box-shadow:inset 0 2px 0 rgba(255,255,255,.9), 0 3px 6px rgba(0,0,0,.15); display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--ink); font-family:var(--f-num);}
+
+  /* 飞机 token（轨道上的棋子） */
+  .plane{
+    position:absolute; width:30px; height:30px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700;
+    font-family:var(--f-num); font-size:13px;
+    box-shadow:inset 0 3px 0 rgba(255,255,255,.55), 0 4px 8px rgba(0,0,0,.18);
+    border:2px solid rgba(255,255,255,.7);
+  }
+  .plane.red{background:radial-gradient(circle at 35% 30%, #ff9bb0, var(--red-d));}
+  .plane.yellow{background:radial-gradient(circle at 35% 30%, #ffe08a, var(--yellow-d));}
+  .plane.blue{background:radial-gradient(circle at 35% 30%, #97c8ff, var(--blue-d));}
+  .plane.green{background:radial-gradient(circle at 35% 30%, #8fe6ad, var(--green-d));}
+  .plane.movable{outline:3px solid #fff; box-shadow:inset 0 3px 0 rgba(255,255,255,.55), 0 0 0 4px var(--brand), 0 4px 10px rgba(123,108,246,.4); animation:pulse 1s infinite alternate;}
+  @keyframes pulse{from{box-shadow:inset 0 3px 0 rgba(255,255,255,.55),0 0 0 3px var(--brand),0 4px 8px rgba(123,108,246,.3);}to{box-shadow:inset 0 3px 0 rgba(255,255,255,.55),0 0 0 6px var(--brand),0 6px 14px rgba(123,108,246,.5);}}
+
+  /* 玩家卡 */
+  .pcard{
+    display:flex; align-items:center; gap:12px; background:var(--surface); border-radius:var(--r-md);
+    padding:12px 14px; box-shadow:var(--sh-sm); border:1px solid var(--line);
+  }
+  .pcard.active{border:2px solid var(--brand); box-shadow:0 0 0 4px var(--brand-soft), var(--sh-md); animation:glow 1.4s infinite alternate;}
+  @keyframes glow{from{box-shadow:0 0 0 3px var(--brand-soft),var(--sh-sm);}to{box-shadow:0 0 0 6px var(--brand-soft),var(--sh-md);}}
+  .avatar{width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-family:var(--f-num); box-shadow:inset 0 2px 0 rgba(255,255,255,.5);}
+  .pcard .name{font-weight:700; color:var(--ink); font-size:15px;}
+  .pcard .meta{font-size:12px; color:var(--muted);}
+  .pcard .prog{margin-left:auto; font-family:var(--f-num); font-weight:700; color:var(--ink); font-size:14px;}
+  .tag{font-size:11px; padding:2px 8px; border-radius:999px; color:#fff; font-weight:700;}
+
+  /* 骰子区 */
+  .dice-card{background:var(--surface); border-radius:var(--r-lg); padding:18px; box-shadow:var(--sh-md); text-align:center;}
+  .dice{
+    width:88px; height:88px; margin:6px auto 14px; border-radius:22px; background:linear-gradient(180deg,#fff,#F3F0FA);
+    box-shadow:inset 0 3px 0 #fff, 0 8px 0 #D9D3EC, 0 12px 18px rgba(80,60,160,.18);
+    display:flex; align-items:center; justify-content:center; font-family:var(--f-num); font-weight:700; font-size:44px; color:var(--brand-dark);
+  }
+  .dice.rolling{animation:shake .6s ease;}
+  @keyframes shake{0%{transform:rotate(0) scale(1);}25%{transform:rotate(-14deg) scale(1.08);}50%{transform:rotate(12deg) scale(1.08);}75%{transform:rotate(-7deg);}100%{transform:rotate(0) scale(1);}}
+
+  /* 按钮（轻立体糖果） */
+  .btn{
+    border:none; cursor:pointer; font-family:var(--f-disp); font-size:16px; color:#fff;
+    padding:12px 22px; border-radius:var(--r-md); width:100%;
+    background:linear-gradient(180deg,var(--accent),var(--accent-dark));
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.5), 0 6px 0 var(--accent-dark), 0 10px 16px rgba(245,147,0,.35);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:active{transform:translateY(4px); box-shadow:inset 0 2px 0 rgba(255,255,255,.5), 0 2px 0 var(--accent-dark), 0 4px 8px rgba(245,147,0,.3);}
+  .btn.brand{background:linear-gradient(180deg,var(--brand),var(--brand-dark)); box-shadow:inset 0 2px 0 rgba(255,255,255,.5), 0 6px 0 var(--brand-dark), 0 10px 16px rgba(91,75,214,.35);}
+  .btn.brand:active{box-shadow:inset 0 2px 0 rgba(255,255,255,.5), 0 2px 0 var(--brand-dark), 0 4px 8px rgba(91,75,214,.3);}
+  .btn.ghost{background:var(--surface); color:var(--brand-dark); border:2px solid var(--brand-soft); box-shadow:var(--sh-sm);}
+  .btn:disabled{opacity:.55; cursor:not-allowed; transform:none;}
+
+  .log{background:var(--surface); border-radius:var(--r-md); padding:12px 14px; box-shadow:var(--sh-sm); border:1px solid var(--line); font-size:13px; color:var(--text); max-height:150px; overflow:auto;}
+  .log div{padding:3px 0; border-bottom:1px dashed var(--line);}
+  .log div:last-child{border-bottom:none;}
+  .hint{font-size:12px; color:var(--muted); margin-top:8px; line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 class="page-title">飞行棋大冒险 · 主界面视觉稿</h1>
+  <p class="page-sub">Q 版可爱 + 轻立体质感 · 规范 v1（仅设计预览，尚未接入游戏逻辑）</p>
+
+  <div class="topbar">
+    <div class="brand"><span class="logo">✈</span>飞行棋大冒险</div>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <span class="round-pill">第 3 轮</span>
+      <button class="icon-btn">⚙</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="board-col">
+      <div class="board">
+        <div class="grid" id="grid"></div>
+        <div class="base-pad green" id="bp-green"></div>
+        <div class="base-pad red" id="bp-red"></div>
+        <div class="base-pad blue" id="bp-blue"></div>
+        <div class="base-pad yellow" id="bp-yellow"></div>
+        <!-- 轨道上的示例棋子 -->
+        <div class="plane red movable" style="left:30%; top:18%;">1</div>
+        <div class="plane blue" style="left:62%; top:46%;">2</div>
+        <div class="plane yellow" style="left:46%; top:78%;">3</div>
+        <div class="plane green" style="left:18%; top:52%;">4</div>
+      </div>
+      <p class="hint">说明：四角为各玩家基地（圆润糖果色软垫），十字轨道为标准 52 格主轨 + 四色回家通道，中心为「终点」星标。可走的棋子带蓝色脉冲高光。</p>
+    </div>
+
+    <div class="side-col">
+      <div class="pcard active">
+        <div class="avatar" style="background:linear-gradient(180deg,#ff9bb0,var(--red-d));">红</div>
+        <div>
+          <div class="name">小明 <span class="tag" style="background:var(--red);">红方</span></div>
+          <div class="meta">行动中…</div>
+        </div>
+        <div class="prog">到达 1/4</div>
+      </div>
+      <div class="pcard">
+        <div class="avatar" style="background:linear-gradient(180deg,#97c8ff,var(--blue-d));">蓝</div>
+        <div>
+          <div class="name">电脑1 <span class="tag" style="background:var(--blue);">蓝方</span></div>
+          <div class="meta">等待中</div>
+        </div>
+        <div class="prog">到达 0/4</div>
+      </div>
+      <div class="pcard">
+        <div class="avatar" style="background:linear-gradient(180deg,#ffe08a,var(--yellow-d));">黄</div>
+        <div>
+          <div class="name">电脑2 <span class="tag" style="background:var(--yellow-d);">黄方</span></div>
+          <div class="meta">等待中</div>
+        </div>
+        <div class="prog">到达 2/4</div>
+      </div>
+      <div class="pcard">
+        <div class="avatar" style="background:linear-gradient(180deg,#8fe6ad,var(--green-d));">绿</div>
+        <div>
+          <div class="name">电脑3 <span class="tag" style="background:var(--green-d);">绿方</span></div>
+          <div class="meta">等待中</div>
+        </div>
+        <div class="prog">到达 0/4</div>
+      </div>
+
+      <div class="dice-card">
+        <div class="dice" id="dice">6</div>
+        <button class="btn" id="rollBtn">掷骰子</button>
+        <p class="hint">轮到你时按钮高亮可点；掷骰有 600ms 摇晃动画。</p>
+      </div>
+
+      <div class="log">
+        <div>🎉 小明 掷出 6</div>
+        <div>🛫 小明 飞机起飞</div>
+        <div>💥 小明 撞机，击落 1 架！</div>
+        <div>🟦 电脑1 掷出 3</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 用真实棋盘坐标渲染（与 server/board.js 一致）
+  const MAIN=[[6,13],[6,12],[6,11],[6,10],[6,9],[5,8],[4,8],[3,8],[2,8],[1,8],[0,8],[0,7],[0,6],[1,6],[2,6],[3,6],[4,6],[5,6],[6,5],[6,4],[6,3],[6,2],[6,1],[6,0],[7,0],[8,0],[8,1],[8,2],[8,3],[8,4],[8,5],[9,6],[10,6],[11,6],[12,6],[13,6],[14,6],[14,7],[14,8],[13,8],[12,8],[11,8],[10,8],[9,8],[8,9],[8,10],[8,11],[8,12],[8,13],[8,14],[7,14],[6,14]];
+  const START={red:0,yellow:26,blue:39,green:13};
+  const HOME={red:[[7,13],[7,12],[7,11],[7,10]],yellow:[[7,1],[7,2],[7,3],[7,4]],blue:[[13,7],[12,7],[11,7],[10,7]],green:[[1,7],[2,7],[3,7],[4,7]]};
+  const CENTER=[7,7];
+  const grid=document.getElementById('grid');
+  const cellEls=[];
+  for(let i=0;i<225;i++){const d=document.createElement('div'); d.className='cell'; grid.appendChild(d); cellEls.push(d);}
+  const idx=(r,c)=>r*15+c;
+  MAIN.forEach(([r,c],i)=>{ const cls=Object.entries(START).find(([k,v])=>v===i); cellEls[idx(r,c)].classList.add(cls?('start-'+cls[0]):''); });
+  for(const [color,arr] of Object.entries(HOME)) arr.forEach(([r,c])=>cellEls[idx(r,c)].classList.add('home-'+color));
+  cellEls[idx(CENTER[0],CENTER[1])].classList.add('center'); cellEls[idx(CENTER[0],CENTER[1])].textContent='终点';
+
+  // 基地软垫里的 4 架待飞棋子
+  ['green','red','blue','yellow'].forEach(color=>{
+    const pad=document.getElementById('bp-'+color);
+    const pos=[[18,18],[58,18],[18,58],[58,58]];
+    pos.forEach(([l,t],i)=>{
+      const t2=document.createElement('div'); t2.className='token'; t2.style.left=l+'%'; t2.style.top=t+'%'; t2.style.color=getComputedStyle(document.documentElement).getPropertyValue('--'+color==='--yellow'?'--yellow-d':'--'+color+'-d'); t2.textContent=i+1;
+      pad.appendChild(t2);
+    });
+  });
+
+  // 骰子演示
+  const dice=document.getElementById('dice'); const rollBtn=document.getElementById('rollBtn');
+  rollBtn.addEventListener('click',()=>{
+    dice.classList.remove('rolling'); void dice.offsetWidth; dice.classList.add('rolling');
+    setTimeout(()=>{ dice.textContent=1+Math.floor(Math.random()*6); },300);
+  });
+</script>
+</body>
+</html>
