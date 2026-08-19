@@ -1,0 +1,13 @@
+{
+  "name": "flying-chess",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "网页版多人联机飞行棋（零依赖：Node 原生 WebSocket + 原生 JS）",
+  "scripts": {
+    "start": "node server/index.js",
+    "test": "node server/selftest.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
