@@ -1,0 +1,14 @@
+# Render 部署配置（零依赖 Node + WebSocket 实时联机）
+# 文档：https://render.com/docs/web-services
+services:
+  - type: web
+    name: flying-chess
+    runtime: node
+    plan: free # 免费版：支持 WebSocket；闲置 15 分钟后休眠，首次访问冷启动约 30–60s
+    branch: main
+    buildCommand: npm install # 零依赖，安装为空操作，秒过
+    startCommand: npm start # 读取环境变量 PORT（Render 自动注入），绑定 0.0.0.0
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
