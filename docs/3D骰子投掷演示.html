@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>飞行棋大冒险 · 3D 骰子投掷演示</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Baloo+2:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brand:#7B6CF6; --brand-dark:#5B4BD6; --brand-soft:#ECE9FF;
+    --accent:#FFB23E; --accent-dark:#F59300;
+    --bg1:#FDF1F7; --bg2:#EEF2FF; --bg3:#EAFBF2;
+    --surface:#FFFFFF; --surface2:#FBFAFF;
+    --ink:#2E2A47; --text:#5A5570; --muted:#9A95B0; --line:#ECE8F5;
+    --red:#FF5C7C; --red-d:#E63962; --red-l:#FFD6E0;
+    --yellow:#FFC53D; --yellow-d:#F0A500; --yellow-l:#FFF1C2;
+    --blue:#4DA3FF; --blue-d:#2D7DE0; --blue-l:#D6ECFF;
+    --green:#43D17A; --green-d:#1FA85B; --green-l:#D2F5DE;
+    --f-disp:"ZCOOL KuaiLe","Baloo 2","PingFang SC","Microsoft YaHei",sans-serif;
+    --f-body:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    --f-num:"Baloo 2","ZCOOL KuaiLe","PingFang SC",sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; padding:32px 20px; font-family:var(--f-body); color:var(--text);
+    background:linear-gradient(165deg,var(--bg1) 0%,var(--bg2) 60%,var(--bg3) 100%);
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;}
+  h1{font-family:var(--f-disp); color:var(--ink); font-size:26px; margin:0 0 4px;}
+  .sub{color:var(--muted); font-size:13px; margin:0 0 22px; text-align:center; line-height:1.7;}
+
+  /* 棋盘舞台：在真实棋盘坐标背景中央放置 3D 骰子 */
+  .stage{position:relative; width:min(92vw,460px); aspect-ratio:1/1; border-radius:32px;
+    background:var(--surface); border:2px solid var(--line); box-shadow:0 16px 40px rgba(80,60,160,.18);
+    overflow:hidden; display:flex; align-items:center; justify-content:center; margin-bottom:18px;}
+  .grid{position:absolute; inset:16px; display:grid; grid-template-columns:repeat(15,1fr); grid-template-rows:repeat(15,1fr); gap:2px; opacity:.9;}
+  .gcell{border-radius:6px; background:#F3F0FA;}
+  .gcell.s-red{background:linear-gradient(180deg,var(--red-l),var(--red));}
+  .gcell.s-yellow{background:linear-gradient(180deg,var(--yellow-l),var(--yellow));}
+  .gcell.s-blue{background:linear-gradient(180deg,var(--blue-l),var(--blue));}
+  .gcell.s-green{background:linear-gradient(180deg,var(--green-l),var(--green));}
+  .gcell.home{background:linear-gradient(180deg,#fff,#FFEFF3);}
+  .gcell.ctr{background:linear-gradient(180deg,#FFF6DA,var(--accent)); box-shadow:inset 0 2px 0 #fff;}
+  .center-badge{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    font-family:var(--f-disp); color:var(--accent-dark); font-size:11px; pointer-events:none; z-index:1;}
+
+  /* 地面阴影（随跳跃缩放/变淡） */
+  .shadow{position:absolute; left:50%; bottom:14%; transform:translateX(-50%);
+    width:96px; height:26px; border-radius:50%; background:rgba(60,40,120,.22);
+    filter:blur(4px); z-index:2;}
+
+  /* 跳跃层：负责 translateY 起跳落下 */
+  .jump{position:relative; z-index:3; transform-style:preserve-3d;}
+  .jump.go{animation:jump 1s cubic-bezier(.3,.1,.25,1);}
+  @keyframes jump{
+    0%{transform:translateY(0);}
+    12%{transform:translateY(14px) scale(1.04,.96);}      /* 蓄力下蹲 */
+    45%{transform:translateY(-150px) scale(.96,1.04);}    /* 最高空 */
+    72%{transform:translateY(-26px);}                      /* 下落前段 */
+    88%{transform:translateY(6px);}                        /* 触地回弹 */
+    100%{transform:translateY(0);}
+  }
+  .shadow.go{animation:sh 1s cubic-bezier(.3,.1,.25,1);}
+  @keyframes sh{
+    0%{transform:translateX(-50%) scale(1); opacity:.22;}
+    12%{transform:translateX(-50%) scale(1.12); opacity:.3;}
+    45%{transform:translateX(-50%) scale(.42); opacity:.08;}
+    72%{transform:translateX(-50%) scale(.85); opacity:.18;}
+    100%{transform:translateX(-50%) scale(1); opacity:.22;}
+  }
+
+  /* 3D 骰子本体 */
+  .scene{perspective:760px;}
+  .cube{position:relative; width:96px; height:96px; transform-style:preserve-3d;
+    transform:rotateX(-22deg) rotateY(24deg); /* 待机微倾，露出立体感 */
+    transition:transform .92s cubic-bezier(.15,.85,.25,1);}
+  .face{position:absolute; width:96px; height:96px; border-radius:22px;
+    background:linear-gradient(160deg,#ffffff,#F1EDFA);
+    box-shadow:inset 0 4px 0 rgba(255,255,255,.9), inset 0 -6px 0 rgba(150,135,215,.28), 0 2px 4px rgba(0,0,0,.05);
+    display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr);
+    padding:13px; gap:2px;}
+  .face .dot{align-self:center; justify-self:center; width:18px; height:18px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #ffd98a, var(--accent-dark));
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.6), 0 1px 2px rgba(180,110,0,.4);}
+  .face.front {transform:translateZ(48px);}
+  .face.back  {transform:rotateY(180deg) translateZ(48px);}
+  .face.right {transform:rotateY(90deg)  translateZ(48px);}
+  .face.left  {transform:rotateY(-90deg) translateZ(48px);}
+  .face.top   {transform:rotateX(90deg)  translateZ(48px);}
+  .face.bottom{transform:rotateX(-90deg) translateZ(48px);}
+
+  .result{font-family:var(--f-num); font-weight:700; color:var(--ink); font-size:20px; min-height:28px; margin-bottom:14px;}
+  .btn{border:none; cursor:pointer; font-family:var(--f-disp); font-size:17px; color:#fff;
+    padding:13px 34px; border-radius:16px;
+    background:linear-gradient(180deg,var(--accent),var(--accent-dark));
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.5), 0 6px 0 var(--accent-dark), 0 10px 16px rgba(245,147,0,.35);
+    transition:transform .12s ease, box-shadow .12s ease;}
+  .btn:active{transform:translateY(4px); box-shadow:inset 0 2px 0 rgba(255,255,255,.5), 0 2px 0 var(--accent-dark), 0 4px 8px rgba(245,147,0,.3);}
+  .btn:disabled{opacity:.55; cursor:not-allowed; transform:none;}
+
+  @media (prefers-reduced-motion:reduce){
+    .jump.go,.shadow.go{animation:none;}
+    .cube{transition:transform .25s ease;}
+  }
+</style>
+</head>
+<body>
+  <h1>✈️ 飞行棋大冒险 · 3D 骰子</h1>
+  <p class="sub">棋盘中央的 3D 立体骰子 · 点击下方按钮投掷：<b>蓄力 → 跳起翻转 → 落下定格</b> 显示点数</p>
+
+  <div class="stage">
+    <div class="grid" id="grid"></div>
+    <div class="center-badge">终点</div>
+    <div class="shadow" id="shadow"></div>
+    <div class="jump" id="jump">
+      <div class="scene">
+        <div class="cube" id="cube">
+          <!-- 1 --><div class="face front"><span class="dot" style="grid-area:2/2"></span></div>
+          <!-- 6 --><div class="face back">
+            <span class="dot" style="grid-area:1/1"></span><span class="dot" style="grid-area:1/3"></span>
+            <span class="dot" style="grid-area:2/1"></span><span class="dot" style="grid-area:2/3"></span>
+            <span class="dot" style="grid-area:3/1"></span><span class="dot" style="grid-area:3/3"></span></div>
+          <!-- 3 --><div class="face right">
+            <span class="dot" style="grid-area:1/1"></span><span class="dot" style="grid-area:2/2"></span><span class="dot" style="grid-area:3/3"></span></div>
+          <!-- 4 --><div class="face left">
+            <span class="dot" style="grid-area:1/1"></span><span class="dot" style="grid-area:1/3"></span>
+            <span class="dot" style="grid-area:3/1"></span><span class="dot" style="grid-area:3/3"></span></div>
+          <!-- 2 --><div class="face top">
+            <span class="dot" style="grid-area:1/1"></span><span class="dot" style="grid-area:3/3"></span></div>
+          <!-- 5 --><div class="face bottom">
+            <span class="dot" style="grid-area:1/1"></span><span class="dot" style="grid-area:1/3"></span>
+            <span class="dot" style="grid-area:2/2"></span><span class="dot" style="grid-area:3/1"></span><span class="dot" style="grid-area:3/3"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="result" id="result">点「投掷骰子」试试 ✨</div>
+  <button class="btn" id="rollBtn">🎲 投掷骰子</button>
+
+<script>
+  // 背景棋盘（淡色，仅作舞台氛围）
+  const MAIN=[[6,13],[6,12],[6,11],[6,10],[6,9],[5,8],[4,8],[3,8],[2,8],[1,8],[0,8],[0,7],[0,6],[1,6],[2,6],[3,6],[4,6],[5,6],[6,5],[6,4],[6,3],[6,2],[6,1],[6,0],[7,0],[8,0],[8,1],[8,2],[8,3],[8,4],[8,5],[9,6],[10,6],[11,6],[12,6],[13,6],[14,6],[14,7],[14,8],[13,8],[12,8],[11,8],[10,8],[9,8],[8,9],[8,10],[8,11],[8,12],[8,13],[8,14],[7,14],[6,14]];
+  const START={red:0,yellow:26,blue:39,green:13};
+  const HOME={red:[[7,13],[7,12],[7,11],[7,10]],yellow:[[7,1],[7,2],[7,3],[7,4]],blue:[[13,7],[12,7],[11,7],[10,7]],green:[[1,7],[2,7],[3,7],[4,7]]};
+  const grid=document.getElementById('grid'); const cells=[];
+  for(let i=0;i<225;i++){const d=document.createElement('div'); d.className='gcell'; grid.appendChild(d); cells.push(d);}
+  const idx=(r,c)=>r*15+c;
+  MAIN.forEach(([r,c],i)=>{const k=Object.keys(START).find(c2=>START[c2]===i); if(k) cells[idx(r,c)].classList.add('s-'+k);});
+  for(const [col,arr] of Object.entries(HOME)) arr.forEach(([r,c])=>cells[idx(r,c)].classList.add('home'));
+  cells[idx(7,7)].classList.add('ctr');
+
+  // 3D 骰子投掷逻辑
+  const cube=document.getElementById('cube');
+  const jump=document.getElementById('jump');
+  const shadow=document.getElementById('shadow');
+  const rollBtn=document.getElementById('rollBtn');
+  const result=document.getElementById('result');
+  // 每个点数对应的「让该面朝前」目标旋转角（对面和=7：1-6,3-4,2-5）
+  const FINAL={ 1:{rx:0,ry:0}, 6:{rx:0,ry:180}, 3:{rx:0,ry:-90}, 4:{rx:0,ry:90}, 2:{rx:-90,ry:0}, 5:{rx:90,ry:0} };
+  let busy=false;
+  rollBtn.addEventListener('click',()=>{
+    if(busy) return; busy=true; rollBtn.disabled=true;
+    const n=1+Math.floor(Math.random()*6);
+    const f=FINAL[n];
+    // 在目标角基础上叠加整圈，制造翻滚感；整圈不影响最终朝前
+    const rx=f.rx + 360*2;
+    const ry=f.ry + 360*3;
+    cube.style.transform=`rotateX(${rx}deg) rotateY(${ry}deg)`;
+    // 重启发跳 + 阴影动画
+    jump.classList.remove('go'); shadow.classList.remove('go');
+    void jump.offsetWidth;
+    jump.classList.add('go'); shadow.classList.add('go');
+    result.textContent='骰子翻滚中…';
+    setTimeout(()=>{
+      result.textContent='🎲 你掷出了 '+n+' 点！';
+      busy=false; rollBtn.disabled=false;
+    },1000);
+  });
+</script>
+</body>
+</html>
