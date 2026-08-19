@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>飞行棋大冒险 · 核心组件样式</title>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Baloo+2:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brand:#7B6CF6; --brand-dark:#5B4BD6; --brand-soft:#ECE9FF;
+    --accent:#FFB23E; --accent-dark:#F59300;
+    --bg1:#FDF1F7; --bg2:#EEF2FF; --bg3:#EAFBF2;
+    --surface:#FFFFFF; --surface2:#FBFAFF;
+    --ink:#2E2A47; --text:#5A5570; --muted:#9A95B0; --line:#ECE8F5;
+    --red:#FF5C7C; --red-d:#E63962; --red-l:#FFD6E0;
+    --yellow:#FFC53D; --yellow-d:#F0A500; --yellow-l:#FFF1C2;
+    --blue:#4DA3FF; --blue-d:#2D7DE0; --blue-l:#D6ECFF;
+    --green:#43D17A; --green-d:#1FA85B; --green-l:#D2F5DE;
+    --r-sm:10px; --r-md:16px; --r-lg:22px; --r-xl:28px;
+    --sh-sm:0 2px 6px rgba(80,60,160,.10);
+    --sh-md:0 8px 20px rgba(80,60,160,.14);
+    --sh-lg:0 16px 40px rgba(80,60,160,.18);
+    --ease-pop:cubic-bezier(.34,1.56,.64,1);
+    --f-disp:"ZCOOL KuaiLe","Baloo 2","PingFang SC","Microsoft YaHei",sans-serif;
+    --f-body:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    --f-num:"Baloo 2","ZCOOL KuaiLe","PingFang SC",sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; padding:28px; font-family:var(--f-body); color:var(--text); background:linear-gradient(165deg,var(--bg1) 0%,var(--bg2) 60%,var(--bg3) 100%); min-height:100vh;}
+  .wrap{max-width:920px; margin:0 auto;}
+  .page-title{font-family:var(--f-disp); color:var(--ink); font-size:26px; margin:0 0 4px;}
+  .page-sub{color:var(--muted); font-size:13px; margin:0 0 22px;}
+  .section{background:var(--surface); border-radius:var(--r-lg); box-shadow:var(--sh-md); padding:22px; margin-bottom:20px;}
+  .section h2{font-family:var(--f-disp); color:var(--ink); font-size:20px; margin:0 0 16px;}
+  .row{display:flex; gap:14px; flex-wrap:wrap; align-items:center; margin-bottom:14px;}
+  .lbl{font-size:12px; color:var(--muted); width:100%; margin:6px 0 2px;}
+
+  /* 按钮（轻立体糖果） */
+  .btn{border:none; cursor:pointer; font-family:var(--f-disp); font-size:16px; color:#fff; padding:12px 22px; border-radius:var(--r-md);
+    background:linear-gradient(180deg,var(--accent),var(--accent-dark));
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.5), 0 6px 0 var(--accent-dark), 0 10px 16px rgba(245,147,0,.35);
+    transition:transform .12s ease, box-shadow .12s ease;}
+  .btn:active{transform:translateY(4px); box-shadow:inset 0 2px 0 rgba(255,255,255,.5), 0 2px 0 var(--accent-dark), 0 4px 8px rgba(245,147,0,.3);}
+  .btn.brand{background:linear-gradient(180deg,var(--brand),var(--brand-dark)); box-shadow:inset 0 2px 0 rgba(255,255,255,.5), 0 6px 0 var(--brand-dark), 0 10px 16px rgba(91,75,214,.35);}
+  .btn.brand:active{box-shadow:inset 0 2px 0 rgba(255,255,255,.5), 0 2px 0 var(--brand-dark), 0 4px 8px rgba(91,75,214,.3);}
+  .btn.ghost{background:var(--surface); color:var(--brand-dark); border:2px solid var(--brand-soft); box-shadow:var(--sh-sm);}
+  .btn.sm{font-size:13px; padding:8px 14px; border-radius:12px;}
+  .btn.lg{font-size:18px; padding:14px 28px; border-radius:18px;}
+  .btn:disabled{opacity:.55; cursor:not-allowed; transform:none; box-shadow:var(--sh-sm);}
+
+  /* 卡牌 */
+  .card{background:var(--surface); border-radius:var(--r-lg); border:1px solid var(--line); box-shadow:var(--sh-sm); padding:16px; max-width:260px;}
+  .card h3{font-family:var(--f-disp); color:var(--ink); margin:0 0 8px; font-size:18px;}
+  .card p{margin:0; font-size:13px; color:var(--text); line-height:1.6;}
+
+  /* 弹窗 */
+  .modal-mock{position:relative; background:var(--surface); border-radius:var(--r-xl); box-shadow:var(--sh-lg); padding:26px 24px 22px; max-width:340px; margin:0 auto;
+    animation:pop .32s var(--ease-pop);}
+  @keyframes pop{from{transform:scale(.96); opacity:0;}to{transform:scale(1); opacity:1;}}
+  .modal-badge{width:62px; height:62px; border-radius:20px; margin:-52px auto 10px; display:flex; align-items:center; justify-content:center; font-size:30px;
+    background:linear-gradient(180deg,#fff,var(--brand-soft)); box-shadow:inset 0 2px 0 #fff, 0 6px 14px rgba(123,108,246,.3);}
+  .modal-mock h3{font-family:var(--f-disp); color:var(--ink); text-align:center; margin:0 0 6px; font-size:22px;}
+  .modal-mock p{text-align:center; font-size:13px; color:var(--muted); margin:0 0 18px;}
+  .modal-actions{display:flex; gap:10px;}
+
+  /* 玩家栏 */
+  .pbar{display:flex; align-items:center; gap:12px; background:var(--surface); border-radius:var(--r-md); padding:12px 14px; border:1px solid var(--line); box-shadow:var(--sh-sm); max-width:320px;}
+  .pbar.active{border:2px solid var(--brand); box-shadow:0 0 0 4px var(--brand-soft), var(--sh-md);}
+  .avatar{width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-family:var(--f-num); box-shadow:inset 0 2px 0 rgba(255,255,255,.5);}
+  .pbar .name{font-weight:700; color:var(--ink); font-size:15px;}
+  .pbar .meta{font-size:12px; color:var(--muted);}
+  .pbar .prog{margin-left:auto; font-family:var(--f-num); font-weight:700; color:var(--ink); font-size:14px;}
+
+  .twocol{display:flex; gap:20px; flex-wrap:wrap;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 class="page-title">飞行棋大冒险 · 核心组件样式</h1>
+  <p class="page-sub">按钮 / 卡牌 / 弹窗 / 玩家栏 — 规范 v1</p>
+
+  <div class="section">
+    <h2>按钮 Button</h2>
+    <div class="lbl">主行动（掷骰子用 Accent 琥珀）</div>
+    <div class="row">
+      <button class="btn">掷骰子</button>
+      <button class="btn brand">创建房间</button>
+      <button class="btn ghost">加入房间</button>
+    </div>
+    <div class="lbl">尺寸 S / M / L</div>
+    <div class="row">
+      <button class="btn sm">小</button>
+      <button class="btn">中</button>
+      <button class="btn lg">大</button>
+    </div>
+    <div class="lbl">状态：默认 / 悬停(上浮) / 按压(下沉) / 禁用</div>
+    <div class="row">
+      <button class="btn brand">可点击</button>
+      <button class="btn brand" disabled>已禁用</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>卡牌 Card</h2>
+    <div class="row">
+      <div class="card">
+        <h3>房间卡片</h3>
+        <p>房间号 <b style="color:var(--brand-dark); font-family:var(--f-num);">BVGN</b><br/>把号码发给朋友即可加入对局。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>弹窗 Modal</h2>
+    <div class="modal-mock">
+      <div class="modal-badge">🏆</div>
+      <h3>胜利！</h3>
+      <p>小明 率先让 4 架飞机抵达终点</p>
+      <div class="modal-actions">
+        <button class="btn brand" style="flex:1;">再来一局</button>
+        <button class="btn ghost" style="flex:1;">返回大厅</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>玩家信息栏 Player Bar</h2>
+    <div class="twocol">
+      <div class="pbar active">
+        <div class="avatar" style="background:linear-gradient(180deg,#ff9bb0,var(--red-d));">红</div>
+        <div><div class="name">小明 <span style="font-size:11px; color:var(--red);">红方</span></div><div class="meta">行动中…</div></div>
+        <div class="prog">1/4</div>
+      </div>
+      <div class="pbar">
+        <div class="avatar" style="background:linear-gradient(180deg,#97c8ff,var(--blue-d));">蓝</div>
+        <div><div class="name">电脑1 <span style="font-size:11px; color:var(--blue-d);">蓝方</span></div><div class="meta">等待中</div></div>
+        <div class="prog">0/4</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
