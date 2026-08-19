@@ -1,0 +1,13 @@
+# 依赖（零依赖项目，本应无 node_modules；保留以防本地安装）
+node_modules/
+
+# 本地编辑器 / 系统文件
+.DS_Store
+Thumbs.db
+*.log
+
+# WorkBuddy 项目元数据
+.workbuddy/
+
+# 隧道密钥（含私钥，禁止提交）
+.tunnel/
